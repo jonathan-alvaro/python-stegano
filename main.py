@@ -105,8 +105,7 @@ def main():
         output_filename = input("Masukkan nama file output : ")
         output_video = VideoFile(output_filename,'w')
         resolution = (height, width)
-        print(height)
-        output_video.configure_output(output_filename, 20.0, resolution)
+        output_video.configure_output(output_filename, 20, resolutions)
         for frame in frame_list:
             output_video.write_frame(frame)
 

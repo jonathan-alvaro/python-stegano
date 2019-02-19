@@ -32,7 +32,6 @@ class VideoFrame:
     
     def write_pixel(self, x, y, rgb_array):
         """Writes the RGB value into pixel at location (x, y)
-
         rgb_array -- a 1D array of length 3 containing RGB values
         """
         try:
@@ -56,7 +55,7 @@ class VideoFile:
         if self._mode == 'r':
             self._video = cv.VideoCapture(filename)
         elif self._mode == 'w':
-            self._codec = cv.VideoWriter_fourcc(*'XVID')
+            self._codec = cv.VideoWriter_fourcc(*'XVID ')
             self._video = cv.VideoWriter("videos/out.avi", self._codec
                                             , 20.0, (1080, 1920))
         else:
@@ -67,7 +66,9 @@ class VideoFile:
 
 
     def get_frame(self):
-        """Returns the next frame from the video as a VideoFrame object"""
+        """Returns the next frame from the video as a VideoFrame object
+        Return None if no more frame is available
+        """
 
         try:
             assert(self._mode == 'r')
@@ -75,14 +76,17 @@ class VideoFile:
             print("Cannot get frame, file is opened in write mode")
             raise
 
-        _, frame = self._video.read()
-        self._current_frame += 1
-        return VideoFrame(frame)
+        ret, frame = self._video.read()
+
+        if ret:
+            self._current_frame += 1
+            return VideoFrame(frame)
+        else:
+            return None
 
     
     def configure_output(self, filename, framerate, size):
         """Configures the properties of the output video
-
         filename -- name of output video (v.avi by default)
         framerate -- framerate for output video (20.0 by default)
         size -- video resolution ((1080, 1920) by default)
@@ -92,9 +96,7 @@ class VideoFile:
 
     def write_frame(self, frame):
         """Writes a single frame into the video file
-
         Remember to call configure_output method before writing
-
         frame -- VideoFrame object
         """
 
@@ -105,3 +107,8 @@ class VideoFile:
             raise
         
         self._video.write(frame.pixels)
+
+
+    @property
+    def resolution(self):
+        return(self._video.get(cv.CAP_PROP_FRAME_WIDTH), self._video.get(cv.CAP_PROP_FRAME_HEIGHT))
