@@ -112,3 +112,8 @@ class VideoFile:
             raise
         
         self._video.write(frame.pixels)
+
+
+    @property
+    def resolution(self):
+        return(self._video.get(cv.CAP_PROP_FRAME_WIDTH), self._video.get(cv.CAP_PROP_FRAME_HEIGHT))
