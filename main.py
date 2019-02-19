@@ -1,4 +1,30 @@
-from VideoIO import VideoFile
+from VideoIO import *
+import math
+
+def video_psnr (video1_frame_list, video2_frame_list):
+    psnr_list = []
+    for i in range (len(video1_frame_list)):
+        video1_pixels = video1_frame_list[i].pixels
+        video2_pixels = video2_frame_list[i].pixels
+
+        m = len(video1_pixels)
+        n = len(video1_pixels[0])
+        diff_sum = 0
+        for j in range (m):
+            for k in range (n):
+                diff_r = video1_pixels[j][k][0] - video2_pixels[j][k][0]
+                diff_g = video1_pixels[j][k][1] - video2_pixels[j][k][1]
+                diff_b = video1_pixels[j][k][2] - video2_pixels[j][k][2]
+                diff_sum = diff_sum + (diff_r+diff_g+diff_b)**2
+
+        rms = math.sqrt(diff_sum/(m*n))
+        if rms == 0:
+            psnr = 0
+        else:
+            psnr = 20 * math.log10(256/rms)
+
+        psnr_list.append(0)
+    return sum(psnr_list)/len(psnr_list)
 
 # MAIN FILE
 print("Pilih mode program:")
@@ -17,10 +43,17 @@ video_file = VideoFile(video_filename,'r')
 #Get Frames
 frame_list = []
 video_frame = video_file.get_frame()
-while video_frame:
-    frame_list.append(video_frame)
-    video_frame = video_file.get_frame()
+frame_list.append(video_frame)
+video_frame = video_file.get_frame()
+frame_list.append(video_frame)
+video_frame = video_file.get_frame()
+frame_list.append(video_frame)
 
+# while video_frame:
+#     frame_list.append(video_frame)
+#     video_frame = video_file.get_frame()
+
+print (video_psnr(frame_list,frame_list))
 #Debug, check whether frame are taken
 print(len(frame_list))
 
