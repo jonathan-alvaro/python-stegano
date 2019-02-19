@@ -2,7 +2,7 @@ import utils
 
 def sequential_image_stegano(frame, message, lsb_size, size_x, size_y):
 	# takes a single frame and outputs a frame with a message hidden in it
-	bits = str_to_bits(message)
+	bits = utils.str_to_bits(message)
 
 	x = 0
 	y = 0
@@ -35,7 +35,7 @@ def sequential_image_stegano(frame, message, lsb_size, size_x, size_y):
 
 def seeded_image_stegano(frame, message, lsb_size, size_x, size_y, pixels):
 	# takes a single frame and outputs a frame with a message hidden in it
-	bits = str_to_bits(message)
+	bits = utils.str_to_bits(message)
 
 	colour = 0
 	i = 0
@@ -97,7 +97,7 @@ def extract_sequential(frame, message_length, lsb_size, size_x, size_y):
 			x = 0
 			y += 1
 
-	message = bits_to_str(bits)
+	message = utils.bits_to_str(bits)
 
 	return message
 
@@ -126,6 +126,6 @@ def extract_seeded(frame, lsb_size, size_x, size_y, pixels):
 
 		colour = (colour + 1) % 3
 
-	message = bits_to_str(bits)
+	message = utils.bits_to_str(bits)
 
 	return message
