@@ -94,7 +94,7 @@ class VideoFile:
         framerate -- framerate for output video (20.0 by default)
         size -- video resolution ((1080, 1920) by default)
         """
-        self._video.open(filename, self._codec, framerate, size)
+        self._video.open(filename,cv.CAP_FFMPEG, self._codec, framerate, size)
 
 
     def write_frame(self, frame):
