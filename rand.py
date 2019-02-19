@@ -1,7 +1,7 @@
 import random 
 
 
-def generate_random_list(key, list_length, frame_size,number_of_frame):
+def generate_random_list(key, list_length, frame_size, number_of_frame):
     key.lower()
     random_seed = 0
     for c in key:
