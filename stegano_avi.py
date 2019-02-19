@@ -1,13 +1,59 @@
 import utils
+from VideoIO import VideoFrame
+
+def insert_stegano_info(frame, lsb_size, is_frame_random, is_pixel_random):
+	#inserts stegano info on first frame
+	if is_frame_random:
+		frame_value = 1
+	else:
+		frame_value = 0
+
+	if is_pixel_random:
+		pixel_value = 1
+	else:
+		pixel_value = 0
+
+	lsb_value = lsb_size - 1
+
+	pixel = frame.get_pixel(0, 0)
+	pixel[0] = ((pixel[0] >> 1) << 1) + frame_value
+	pixel[1] = ((pixel[1] >> 1) << 1) + pixel_value
+	pixel[2] = ((pixel[2] >> 1) << 1) + lsb_value
+
+	frame.write_pixel(0, 0, pixel)
+
+def extract_stegano_info(frame):
+	pixel = frame.get_pixel(0, 0)
+	frame_value = ((pixel[0] >> 1) << 1) + frame_value
+	pixel_value = ((pixel[1] >> 1) << 1) + pixel_value
+	lsb_value = ((pixel[2] >> 1) << 1) + lsb_value
+
+	if frame_value == 1:
+		is_frame_random = True
+	else:
+		is_frame_random = False
+
+	if pixel_value == 1:
+		is_pixel_random = True
+	else:
+		is_pixel_random = False
+
+	lsb_size = lsb_value + 1
+
+	return is_frame_random, is_pixel_random, lsb_value
 
 def sequential_image_stegano(frame, message, lsb_size, size_x, size_y):
 	# takes a single frame and outputs a frame with a message hidden in it
 	bits = utils.str_to_bits(message)
 
-	x = 0
-	y = 0
-	colour = 0
+	## SIMPAN PANJANG MESSAGE DI PIXEL PERTAMA
+	pixel = frame.get_pixel(0,0)
+	pixel[0] = len(bits)
+	frame.write_pixel(0, 0, pixel)
 
+	colour = 0
+	x = 1
+	y = 0
 	i = 0
 
 	while (i < len(bits)):
@@ -64,10 +110,14 @@ def seeded_image_stegano(frame, message, lsb_size, size_x, size_y, pixels):
 	if colour != 0:
 		frame.write_pixel(x, y, pixel)
 
-def extract_sequential(frame, message_length, lsb_size, size_x, size_y):
+def extract_sequential(frame, lsb_size, size_x, size_y):
 	# takes a single frame and extracts a hidden message
 
-	x = 0
+	# AMBIL PANJANG MESSAGE
+	pixel = frame.get_pixel(0,0)
+	message_length = pixel[0]
+
+	x = 1
 	y = 0
 	colour = 0
 	bits = []

@@ -57,7 +57,7 @@ class VideoFile:
             self._video = cv.VideoCapture(filename)
         elif self._mode == 'w':
             self._codec = cv.VideoWriter_fourcc(*'XVID')
-            self._video = cv.VideoWriter("videos/out.avi", self._codec
+            self._video = cv.VideoWriter("videos/" + filename, self._codec
                                             , 20.0, (1080, 1920))
         else:
             print("Failed to open video file: mode not recognized")
