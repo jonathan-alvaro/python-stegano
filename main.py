@@ -105,7 +105,7 @@ def main():
         output_filename = input("Masukkan nama file output : ")
         output_video = VideoFile(output_filename,'w')
         resolution = (height, width)
-        output_video.configure_output(output_filename, 20, resolutions)
+        output_video.configure_output(output_filename, 20, resolution)
         for frame in frame_list:
             output_video.write_frame(frame)
 
@@ -153,8 +153,13 @@ def main():
 
         ## Langsung Ekstraksi aja boi
         ##print("Extracting")
+        if is_encypted:
+            stegano_key = stegano_key.upper()
+            stegano_key = vigenere.remove_symbols(stegano_key)
+            stegano_key = stegano_key.replace(" ", "")
+            text = vigenere.standard_vigenere_cipher(text, stegano_key, False)
         output_filename = input("Masukkan nama file output : ")
-        f = open(output_filename, 'wb')
+        f = open(output_filename, 'w')
         f.write(text)
         f.close()
 

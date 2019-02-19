@@ -55,8 +55,8 @@ class VideoFile:
         if self._mode == 'r':
             self._video = cv.VideoCapture(filename)
         elif self._mode == 'w':
-            self._codec = cv.VideoWriter_fourcc(*'XVID ')
-            self._video = cv.VideoWriter("videos/out.avi", self._codec
+            self._codec = cv.VideoWriter_fourcc(*'XVID')
+            self._video = cv.VideoWriter("videos/" + filename, self._codec
                                             , 20.0, (1080, 1920))
         else:
             print("Failed to open video file: mode not recognized")
@@ -85,13 +85,14 @@ class VideoFile:
             return None
 
     
-    def configure_output(self, filename, framerate, size):
+    def configure_output(self, filename, framerate, width, height):
         """Configures the properties of the output video
         filename -- name of output video (v.avi by default)
         framerate -- framerate for output video (20.0 by default)
         size -- video resolution ((1080, 1920) by default)
         """
-        self._video.open(filename, self._codec, framerate, size)
+        capsize = (height, width)
+        self._video.open(filename, self._codec, framerate, capsize, True)
 
 
     def write_frame(self, frame):
