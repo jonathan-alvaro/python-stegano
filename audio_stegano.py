@@ -1,4 +1,5 @@
 import wave
+from time import sleep
 
 LSB_SEQUENTIAL = 1
 LSB_RANDOM = 0
@@ -6,7 +7,7 @@ LSB_RANDOM = 0
 
 def pack_audio_lsb_message(message, filename):
     """Inserts necessary information for decryption into the message"""
-    message = filename + ' ' + len(message) + ' ' + message
+    message = str(len(message)) + ' ' + filename + ' ' + message
     return message
 
 
@@ -44,13 +45,13 @@ def sequential_audio_lsb(in_audio, out_audio, message):
     char = message[embedded_chars]
 
     for _ in range(in_audio.getnframes()):
-        frame = in_audio.readframes(1)
-
+        
         if embedded_chars < len(message):
+            frame = in_audio.readframes(1)
             for i, b in enumerate(frame):
 
                 # Extract LSB
-                embed_bit = (char >> (8 - (i + 1)) & 1)
+                embed_bit = (ord(char) >> (8 - (current_char_bits + 1)) & 1)
 
                 # Embed LSB
                 modified_byte = frame[i] & (~1) | embed_bit
@@ -60,10 +61,71 @@ def sequential_audio_lsb(in_audio, out_audio, message):
                 if current_char_bits == 8:
                     embedded_chars += 1
                     current_char_bits = 0
-                    char = message[embedded_chars]
+                    if embedded_chars < len(message):
+                        char = message[embedded_chars]
             
-        out_audio.writeframes(frame)
+            out_audio.writeframes(frame)
+        
+        else:
+            frame = in_audio.readframes(in_audio.getnframes())
+            out_audio.writeframes(frame)
+            break
 
 
-def extract_sequential_audio_lsb(audio_file):
+def extract_sequential_audio_lsb(in_audio):
+    """Extracts a message embedded within a wav file
     
+    arguments:
+    in_audio : a Wave_read object opened on an audio file
+                containing an embedded message
+
+    returns:
+    filename : original audio filename
+    message : embedded message
+    """
+
+    try:
+        assert(type(in_audio) == wave.Wave_read)
+    except AssertionError:
+        print("Expected Wave_read object")
+        raise
+
+    # Skip first frame as it is used to store LSB mode information
+    in_audio.rewind()
+    in_audio.readframes(1)
+
+    frames = in_audio.readframes(in_audio.getnframes() - 1)
+
+    current_char_bits = 0
+    message = ''
+    message_length = None
+    filename = None
+    current_char = 0
+
+    for char in frames:
+        embedded_bit = char & 1
+        current_char = current_char << 1 | embedded_bit
+        current_char_bits += 1
+        # print(current_char)
+        # sleep(1)
+
+        if current_char_bits == 8:
+            if chr(current_char) == ' ':
+                if not message_length:
+                    message_length = int(message)
+            
+                elif not filename:
+                    filename = message
+
+                message = ''
+            
+            else:
+                message += chr(current_char)
+            
+            if len(message) == message_length and filename and message_length:
+                break
+
+            current_char_bits = 0
+            current_char = 0
+
+    return (filename, message)
