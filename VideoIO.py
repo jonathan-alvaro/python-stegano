@@ -56,7 +56,7 @@ class VideoFile:
         if self._mode == 'r':
             self._video = cv.VideoCapture(filename)
         elif self._mode == 'w':
-            self._codec = cv.VideoWriter_fourcc(*'XVID')
+            self._codec = cv.VideoWriter_fourcc(*'DIB ')
             self._video = cv.VideoWriter("videos/out.avi", self._codec
                                             , 20.0, (1080, 1920))
         else:
