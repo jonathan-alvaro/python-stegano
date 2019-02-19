@@ -23,6 +23,12 @@ def main():
 
     if mode == 1:
         message = get_message(message_file)
+        frame_size = len(in_audio.readframes(1))
+        in_audio.rewind()
+        payload_size = in_audio.getnframes() * frame_size - 80 - len(audio_file) * 8
+        if len(message) * 8 > payload_size:
+            print("Error, message larger than payload size")
+            raise AssertionError
         out_file = input("Output Audio File: ")
         out_audio = wave.open(out_file, 'w')
         out_audio.setparams(in_audio.getparams())
