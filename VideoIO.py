@@ -67,7 +67,10 @@ class VideoFile:
 
 
     def get_frame(self):
-        """Returns the next frame from the video as a VideoFrame object"""
+        """Returns the next frame from the video as a VideoFrame object
+
+        Return None if no more frame is available
+        """
 
         try:
             assert(self._mode == 'r')
@@ -75,9 +78,13 @@ class VideoFile:
             print("Cannot get frame, file is opened in write mode")
             raise
 
-        _, frame = self._video.read()
-        self._current_frame += 1
-        return VideoFrame(frame)
+        ret, frame = self._video.read()
+
+        if ret:
+            self._current_frame += 1
+            return VideoFrame(frame)
+        else:
+            return None
 
     
     def configure_output(self, filename, framerate, size):
