@@ -45,3 +45,8 @@ class AudioFile:
             raise
         
         self._audio.write(new_bytes)
+
+
+    @property
+    def filename(self):
+        return self._filename
