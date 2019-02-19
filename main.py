@@ -1,9 +1,10 @@
 from VideoIO import *
 import math
 
-def video_psnr (video1_frame_list, video2_frame_list):
+# Accept video,stegano-video frame list. Also need the list of encrypted frame (index) as encrypted_index
+def video_psnr (video1_frame_list, video2_frame_list, encrypted_index):
     psnr_list = []
-    for i in range (len(video1_frame_list)):
+    for i in encrypted_index:
         video1_pixels = video1_frame_list[i].pixels
         video2_pixels = video2_frame_list[i].pixels
 
