@@ -57,7 +57,7 @@ class VideoFile:
             self._video = cv.VideoCapture(filename)
         elif self._mode == 'w':
             self._codec = cv.VideoWriter_fourcc(*'XVID')
-            self._video = cv.VideoWriter("videos/" + filename, self._codec
+            self._video = cv.VideoWriter("videos/out.avi", self._codec
                                             , 20.0, (1080, 1920))
         else:
             print("Failed to open video file: mode not recognized")
@@ -67,10 +67,7 @@ class VideoFile:
 
 
     def get_frame(self):
-        """Returns the next frame from the video as a VideoFrame object
-
-        Return None if no more frame is available
-        """
+        """Returns the next frame from the video as a VideoFrame object"""
 
         try:
             assert(self._mode == 'r')
@@ -78,13 +75,9 @@ class VideoFile:
             print("Cannot get frame, file is opened in write mode")
             raise
 
-        ret, frame = self._video.read()
-
-        if ret:
-            self._current_frame += 1
-            return VideoFrame(frame)
-        else:
-            return None
+        _, frame = self._video.read()
+        self._current_frame += 1
+        return VideoFrame(frame)
 
     
     def configure_output(self, filename, framerate, size):
@@ -112,8 +105,3 @@ class VideoFile:
             raise
         
         self._video.write(frame.pixels)
-
-
-    @property
-    def resolution(self):
-        return(self._video.get(cv.CAP_PROP_FRAME_WIDTH), self._video.get(cv.CAP_PROP_FRAME_HEIGHT))
