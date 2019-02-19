@@ -10,6 +10,7 @@ class AudioFile:
         mode -- 'r' for read, 'w' for write
         """
         self._mode = mode
+        self._filename = filename
         if self._mode == 'r':
             self._audio = open(filename, 'rb')
         elif self._mode == 'w':
