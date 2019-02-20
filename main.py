@@ -133,10 +133,13 @@ def main():
         output_video.configure_output(output_filename, 20, height, width)
         for frame in frame_list:
             output_video.write_frame(frame)
+        output_video._video.release()
 
         print("Message successfully hidden")
     elif(mode == 2):
         ## EKSTRAKSI
+
+        width, height = video_file.resolution
 
         is_frame_random, is_pixel_random, lsb_value = stegano_avi.extract_stegano_info(frame_list[0])
         text = ""
@@ -147,7 +150,8 @@ def main():
                 # FRAME SEKUENSIAL, PIXEL SEKUENSIAL
                 for frame_no in range(1, len(frame_list)):
                     message = stegano_avi.extract_sequential(frame_list[frame_no], lsb_value, width, height)
-                    text.append(message)
+                    text = text + message
+                    print(text)
 
                 #print("fsps")
             else:
@@ -155,7 +159,7 @@ def main():
                 pixel_list = rand.generate_random_list(stegano_key, length_per_frame * 8, total_pixels, len(frame_list))
                 for frame_no in range(1, len(frame_list)):
                     message = stegano_avi.extract_seeded(frame_list[frame_no], lsb_value, width, height, pixel_list)
-                    text.append(message)
+                    text = text + message
 
                 #print("fspr")
         else:
@@ -166,14 +170,14 @@ def main():
                 # FRAME RANDOM, PIXEL SEKUENSIAL
                 for frame_no in used_frames:
                     message = stegano_avi.extract_sequential(frame_list[frame_no], lsb_value, width, height)
-                    text.append(message)
+                    text = text + message
                 #print("frps")
             else:
                 # FRAME RANDOM, PIXEL RANDOM
                 pixel_list = rand.generate_random_list(stegano_key, length_per_frame * 8, total_pixels, len(frame_list))
                 for frame_no in used_frames:
                     message = stegano_avi.extract_seeded(frame_list[frame_no], lsb_value, width, height, pixel_list)
-                    text.append(message)
+                    text = text + message
                 #print("frpr")
 
         ## Langsung Ekstraksi aja boi

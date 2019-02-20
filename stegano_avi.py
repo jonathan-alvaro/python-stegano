@@ -24,9 +24,9 @@ def insert_stegano_info(frame, lsb_size, is_frame_random, is_pixel_random):
 
 def extract_stegano_info(frame):
 	pixel = frame.get_pixel(0, 0)
-	frame_value = ((pixel[0] >> 1) << 1) + frame_value
-	pixel_value = ((pixel[1] >> 1) << 1) + pixel_value
-	lsb_value = ((pixel[2] >> 1) << 1) + lsb_value
+	frame_value = ((pixel[0] << 7) >> 7)
+	pixel_value = ((pixel[1] << 7) >> 7)
+	lsb_value = ((pixel[2] << 7) >> 7)
 
 	if frame_value == 1:
 		is_frame_random = True

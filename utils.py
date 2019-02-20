@@ -8,7 +8,7 @@ def str_to_bits(string):
 
 def bits_to_str(bits):
 	string = []
-	for b in range(len(bits) / 8):
+	for b in range(int(len(bits) / 8)):
 		byte = bits[b*8:(b+1)*8]
 		string.append(chr(int(''.join([str(bit) for bit in byte]), 2)))
-	return ''.join(chars)
+	return ''.join(string)

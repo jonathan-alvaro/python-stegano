@@ -91,8 +91,8 @@ class VideoFile:
         framerate -- framerate for output video (20.0 by default)
         size -- video resolution ((1080, 1920) by default)
         """
-        capsize = (height, width)
-        self._video.open(filename, self._codec, framerate, capsize, True)
+        capsize = (1920, 1080)
+        self._video.open("videos/" + filename, self._codec, framerate, capsize, True)
 
 
     def write_frame(self, frame):
