@@ -40,7 +40,7 @@ def extract_stegano_info(frame):
 
 	lsb_size = lsb_value + 1
 
-	return is_frame_random, is_pixel_random, lsb_value
+	return is_frame_random, is_pixel_random, lsb_size
 
 def sequential_image_stegano(frame, message, lsb_size, size_x, size_y):
 	# takes a single frame and outputs a frame with a message hidden in it

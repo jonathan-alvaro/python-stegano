@@ -27,7 +27,7 @@ def video_psnr (video1_frame_list, video2_frame_list, encrypted_index):
         else:
             psnr = 20 * math.log10(256/rms)
 
-        psnr_list.append(0)
+        psnr_list.append(psnr)
     return sum(psnr_list)/len(psnr_list)
 
 def main():
@@ -55,7 +55,7 @@ def main():
         video_frame = video_file.get_frame()
 
     #Debug, check whether frame are taken
-    #print(len(frame_list))
+    print(len(frame_list))
 
     if (mode == 1):
         ## BACA FILE PLAINTEKS
@@ -101,7 +101,7 @@ def main():
                 frame_no = 1
                 for i in range(0, len(text), length_per_frame):
                     message = text[i:(i+length_per_frame)]
-                    stegano_avi.seeded_image_stegano(frame_list[frame_no], message, lsb_size, size_x, size_y, pixel_list[frame_no])
+                    stegano_avi.seeded_image_stegano(frame_list[frame_no], message, lsb_size, width, height, pixel_list[frame_no])
                     frame_no = frame_no + 1
 
                 #print("fspr")
@@ -117,13 +117,12 @@ def main():
                     stegano_avi.sequential_image_stegano(frame_list[used_frames[frame_no]], message, lsb_size, width, height)
                     frame_no = frame_no + 1
                 #print("frps")
-            else:
                 # FRAME RANDOM, PIXEL RANDOM
                 pixel_list = rand.generate_random_list(stegano_key, length_per_frame * 8, total_pixels, len(used_frames))
                 frame_no = 1
                 for i in range(0, len(text), length_per_frame):
                     message = text[i:(i+length_per_frame)]
-                    stegano_avi.seeded_image_stegano(frame_list[used_frames[frame_no]], message, lsb_size, size_x, size_y, pixel_list[frame_no])
+                    stegano_avi.seeded_image_stegano(frame_list[used_frames[frame_no]], message, lsb_size, width, height, pixel_list[frame_no])
                     frame_no = frame_no + 1
                 #print("frpr")
 
@@ -144,6 +143,7 @@ def main():
         is_frame_random, is_pixel_random, lsb_value = stegano_avi.extract_stegano_info(frame_list[0])
         text = ""
 
+        print(is_frame_random + is_pixel_random + lsb_value)
         if (not is_frame_random):
             # FRAME SEKUENSIAL
             if (not is_pixel_random):
@@ -165,7 +165,7 @@ def main():
         else:
             # FRAME RANDOM
             length_per_frame = length_per_frame * 10
-            used_frames = int(rand.generate_random_frames(stegano_key, len(frame_list), math.ceil(1.0 * len(frame_list) /10)))
+            used_frames = rand.generate_random_frames(stegano_key, len(frame_list), math.ceil(1.0 * len(frame_list) /10))
             if (not is_pixel_random):
                 # FRAME RANDOM, PIXEL SEKUENSIAL
                 for frame_no in used_frames:
